@@ -161,7 +161,8 @@ def delete_dmp_file(file_path):
 
 # 获取临时密钥的逻辑：从日期index出发，向前找，最近的一个8位数字字母组合就是临时密钥
 def get_tempKey(stored_msg,index):
-    pattern = r'^[a-zA-Z0-9]{8}$'
+    # v2.4更新 修复了原有的查找逻辑错误，根据临时密码必然既有数字又有字母来更精确地查找，防止在中间误查到日期等8位全数字的字符串
+    pattern = r'^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8}$'  
     for i in range(index-1,-1,-1):
         result = re.match(pattern, stored_msg[i])
         if result:
@@ -170,11 +171,12 @@ def get_tempKey(stored_msg,index):
 
 # 获取安全密钥的逻辑:从日期index出发，向前找，最近的一个8位数字字母组合的后一个就是安全密钥
 def get_safeKey(stored_msg,index):
-    pattern = r'^[a-zA-Z0-9]{8}$'
+    # v2.4更新 修复了原有的查找逻辑错误，根据临时密码必然既有数字又有字母来更精确地查找，防止在中间误查到日期等8位全数字的字符串
+    pattern = r'^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8}$'  
     for i in range(index-1,-1,-1):
         result = re.match(pattern, stored_msg[i])
         if result:
-            sec_pattern = r'^[a-zA-Z0-9]{8,}'  # 如果用户设置了安全密码，字符串肯定是一个八位以上的字符串
+            sec_pattern = r'^[a-zA-Z0-9]{8,}'  # 如果用户设置了安全密码，字符串肯定是一个八位以上的字符串，否则就是没设置
             sec_result=re.match(sec_pattern, stored_msg[i+1])
             if sec_result:
                 return stored_msg[i+1]
