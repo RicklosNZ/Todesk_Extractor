@@ -1,4 +1,4 @@
-# Todesk_Extractor v2.3
+# Todesk_Extractor v2.4
 
 ## 声明
 一个能够获取Todesk设备代码和密钥的Python程序，仅供学习交流，严禁用于非法用途，后果自负！
